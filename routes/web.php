@@ -14,7 +14,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('livewire.landing');
+});
+
+Route::get('/academy-details', function () {
+    return view('livewire.academy-details');
+});
+
+Route::get('/course-details', function () {
+    return view('livewire.course-details');
 });
 
 Route::middleware([

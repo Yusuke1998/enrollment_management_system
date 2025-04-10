@@ -3,21 +3,17 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Enrollment;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Pay>
- */
 class PayFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'method' => $this->faker->randomElement(['efectivo', 'transferencia']),
+            'amount' => $this->faker->randomFloat(2, 50, 300),
+            'payment_date' => $this->faker->date(),
+            'enrollment_id' => Enrollment::inRandomOrder()->first()->id ?? Enrollment::factory(),
         ];
     }
 }

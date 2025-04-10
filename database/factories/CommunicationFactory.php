@@ -4,20 +4,16 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Communication>
- */
 class CommunicationFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->sentence,
+            'message' => $this->faker->paragraph,
+            'sent_date' => $this->faker->date(),
+            'communicable_id' => $this->faker->numberBetween(1, 10),
+            'communicable_type' => $this->faker->randomElement(['App\Models\Father', 'App\Models\Course']),
         ];
     }
 }

@@ -4,20 +4,17 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Course>
- */
 class CourseFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->word,
+            'description' => $this->faker->paragraph,
+            'cost' => $this->faker->randomFloat(2, 50, 300),
+            'duration' => $this->faker->numberBetween(10, 100),
+            'modality' => $this->faker->randomElement(['presencial', 'virtual']),
+            'academy_id' => $this->faker->numberBetween(1, 5),
         ];
     }
 }
