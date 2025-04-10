@@ -44,5 +44,11 @@
                 </x-button>
             </div>
         </form>
+        
+        @if(session('auth_token'))
+        <input type="hidden" id="auth-token" value="{{ session('auth_token') }}">
+        @endif
     </x-authentication-card>
+    
+    <script src="{{ asset('js/login.js') }}"></script>
 </x-guest-layout>

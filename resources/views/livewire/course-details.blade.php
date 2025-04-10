@@ -123,8 +123,43 @@
   }
 
   document.getElementById('enroll-button').addEventListener('click', function() {
-    // Aquí se implementará la lógica de inscripción
-    alert('Funcionalidad de inscripción en desarrollo');
+    const courseId = new URLSearchParams(window.location.search).get('id');
+    
+    // Check if user is authenticated
+    if (!auth.redirectToLoginIfNotAuthenticated()) {
+      return;
+    }
+    
+    // Get the token and log it for debugging
+    const token = auth.getToken();
+    console.log('Token being used:', token);
+    
+    // Make the API request with the token
+    fetch('/api/user', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Authentication failed');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // User is authenticated, redirect to enrollment form
+      window.location.href = `/enroll-form?course_id=${courseId}`;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // If there's an error, clear the token and redirect to login
+      auth.setToken(null);
+      window.location.href = '/login';
+    });
   });
+
 </script>
 @endsection 

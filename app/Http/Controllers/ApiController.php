@@ -69,6 +69,36 @@ class ApiController extends Controller
         return response()->json(['message' => 'Academy deleted'], 200);
     }
 
+    public function storeEnrollment(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+        $enrollment = Enrollment::create($validated);
+        return response()->json($enrollment, 201);
+    }
+
+    public function updateEnrollment(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+        $enrollment = Enrollment::create($validated);
+        return response()->json($enrollment, 201);
+    }
+
+    public function destroyEnrollment($id)
+    {
+        $enrollment = Enrollment::find($id);
+        if (!$enrollment) {
+            return response()->json(['message' => 'Enrollment not found'], 404);
+        }
+        $enrollment->delete();
+        return response()->json(['message' => 'Enrollment deleted'], 200);
+    }
+
     public function storePayment(Request $request)
     {
         $validated = $request->validate([

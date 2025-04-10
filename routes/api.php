@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +22,9 @@ use App\Http\Controllers\ApiController;
 // });
 
 // Public routes
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 Route::get('/academies', [ApiController::class, 'indexAcademies']);
 Route::get('/academies/{id}', [ApiController::class, 'showAcademy']);
 Route::get('/courses', [ApiController::class, 'indexCourses']);
@@ -27,9 +32,9 @@ Route::get('/courses/{id}', [ApiController::class, 'showCourse']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // User authentication
+    Route::get('/user', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     // Academy management
     Route::post('/academies', [ApiController::class, 'storeAcademy']);
@@ -42,7 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/courses/{id}', [ApiController::class, 'destroyCourse']);
 
     // Enrollment management
-    Route::apiResource('enrollments', ApiController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::post('/enrollments', [ApiController::class, 'storeEnrollment']);
+    Route::put('/enrollments/{id}', [ApiController::class, 'updateEnrollment']);
+    Route::delete('/enrollments/{id}', [ApiController::class, 'destroyEnrollment']);
 
     // Payment registration
     Route::post('payments', [ApiController::class, 'storePayment']);

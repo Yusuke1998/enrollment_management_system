@@ -52,6 +52,23 @@
                         <li class="mr-3">
                             <a class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4" href="/#cursos">Cursos</a>
                         </li>
+                        <!-- Authentication -->
+                        @auth
+                        <li class="mr-3">
+                            <form method="POST" action="{{ route('logout') }}" x-data>
+                                @csrf
+                                <a href="{{ route('logout') }}"
+                                    @click.prevent="$root.submit();"
+                                    onclick="localStorage.removeItem('auth_token');">
+                                    Logout
+                                </a>
+                            </form>
+                        </li>
+                        @else
+                        <li class="mr-3">
+                            <a class="inline-block text-black no-underline hover:text-gray-800 hover:text-underline py-2 px-4" href="{{ route('login') }}">Login</a>
+                        </li>
+                        @endauth
                     </ul>
                 </div>
             </div>
@@ -91,6 +108,7 @@
         </footer>
 
         @livewireScripts
+        <script src="{{ asset('js/auth.js') }}"></script>
         @yield('scripts')
     </body>
 </html>
