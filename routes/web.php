@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Livewire\EnrollFormSteps;
+use App\Http\Controllers\ApiController;
+use App\Models\Enrollment;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +20,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('livewire.landing');
-});
+})->name('landing');
 
 Route::get('/academy-details', function () {
     return view('livewire.academy-details');
@@ -27,31 +30,31 @@ Route::get('/course-details', function () {
     return view('livewire.course-details');
 });
 
-Route::get('/enroll-form', function () {
-    return view('livewire.enroll-form');
-});
+Route::get('/enroll-form', EnrollFormSteps::class);
+Route::get('/inscripcion/confirmacion/{enrollment}', function ($enrollment) {
+    $enrollment = Enrollment::find($enrollment);
+    if (!$enrollment) {
+        session()->flash('success', 'Inscripción no encontrada.');
+        return redirect()->route('landing');
+    }
+    return view('livewire.confirmation', [
+        'enrollment' => $enrollment,
+    ]);
+})->name('enrollment.confirmation');
 
 // Custom logout route to clear the token
 Route::post('/logout', function (Request $request) {
-    // Revocar todos los tokens de API si el usuario está autenticado
     if (Auth::check()) {
         Auth::user()->tokens()->delete();
     }
     
-    // Clear the token from the session
     session()->forget('auth_token');
-    
-    // Logout the user
     Auth::logout();
     
-    // Invalidate the session
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    
-    // Crear una cookie expirada para eliminar la cookie del token
     $cookie = cookie()->forget('auth_token');
-    
-    // Redirect to home
+
     return redirect('/')->withCookie($cookie);
 })->name('logout');
 

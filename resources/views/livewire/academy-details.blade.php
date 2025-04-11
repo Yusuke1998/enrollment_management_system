@@ -85,7 +85,7 @@
           <p class="text-gray-600 mb-4 truncate-text" title="${course.description}">${course.description || 'No description available'}</p>
           <div class="space-y-2">
             <div class="flex justify-between">
-              <span class="text-gray-600">Duración:</span>
+              <span class="text-gray-600">Duración (Horas):</span>
               <span class="font-semibold">${course.duration || 'Not specified'}</span>
             </div>
             <div class="flex justify-between">

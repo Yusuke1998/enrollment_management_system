@@ -11,8 +11,6 @@ function getAuthToken() {
     if (storedToken) {
         return storedToken;
     }
-    
-    console.log('Cookies disponibles:', document.cookie);
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i].trim();
@@ -29,7 +27,6 @@ function getAuthToken() {
 }
 
 function setAuthToken(token) {
-    console.log('setAuthToken called. Setting token:', token);
     if (token) {
         localStorage.setItem('auth_token', token);
     } else {
@@ -38,13 +35,15 @@ function setAuthToken(token) {
 }
 
 function isAuthenticated() {
-    console.log('isAuthenticated called. Checking token presence.');
     return !!getAuthToken();
 }
 
-function redirectToLoginIfNotAuthenticated() {
-    console.log('redirectToLoginIfNotAuthenticated called. Checking authentication status.');
+function redirectToLoginIfNotAuthenticated(addressTo=null) {
+    localStorage.removeItem('addressTo');
     if (!isAuthenticated()) {
+        if (addressTo) {
+            localStorage.setItem('addressTo', addressTo);
+        }
         window.location.href = '/login';
         return false;
     }

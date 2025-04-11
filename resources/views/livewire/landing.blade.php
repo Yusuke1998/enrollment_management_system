@@ -63,11 +63,33 @@
     </div>
   </div>
 </section>
+
+<!-- Call to Action Section -->
+<section class="bg-indigo-600 py-16">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-4xl font-bold text-white mb-6">¿Listo para inscribir a tu hijo?</h2>
+    <p class="text-xl text-indigo-100 mb-8 max-w-3xl mx-auto">
+      Nuestro proceso de inscripción es sencillo y rápido. Selecciona la academia y el curso que mejor se adapte a las necesidades de tu hijo.
+    </p>
+    <!-- <a href="/enroll-form?cta=landing" class="inline-block bg-white text-indigo-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-indigo-50 transition duration-300">
+      Inscribir Ahora
+    </a> -->
+    <button id="cta-enroll-form" class="inline-block bg-white text-indigo-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-indigo-50 transition duration-300">
+    Inscribir Ahora
+    </button>
+  </div>
+</section>
 @endsection
 
 @section('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    const addressTo = localStorage.getItem('addressTo');
+    if (addressTo) {
+      localStorage.removeItem('addressTo');
+      window.location.href = addressTo;
+    }
+    
     // Variables para paginación
     let academiesPage = 1;
     let coursesPage = 1;
@@ -200,6 +222,14 @@
         coursesPage++;
         loadCourses(coursesPage, true);
       }
+    });
+
+    document.getElementById('cta-enroll-form').addEventListener('click', function() {
+      const path = '/enroll-form?cta=landing';
+      if (!auth.redirectToLoginIfNotAuthenticated(path)) {
+        return;
+      }
+      window.location.href = path;
     });
 
     // Load data when page loads

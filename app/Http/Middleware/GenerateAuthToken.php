@@ -19,15 +19,11 @@ class GenerateAuthToken
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
-        
         if (Auth::check() && $request->is('login') && $request->isMethod('post')) {
             $user = Auth::user();
-            
             $tokenResult = $user->createToken('auth_token');
             $plainTextToken = $tokenResult->plainTextToken;
-            
             $cookie = Cookie::make('auth_token', $plainTextToken, 60 * 24 * 30, '/', null, false, false);
-            
             $response->withCookie($cookie);
         }
         

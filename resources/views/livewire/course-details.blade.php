@@ -23,7 +23,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-gray-50 p-4 rounded-lg">
-          <h3 class="text-sm font-medium text-gray-500">Duración</h3>
+          <h3 class="text-sm font-medium text-gray-500">Duración (Horas)</h3>
           <p class="mt-1 text-lg font-semibold text-gray-900" id="course-duration"></p>
         </div>
         <div class="bg-gray-50 p-4 rounded-lg">
@@ -124,9 +124,9 @@
 
   document.getElementById('enroll-button').addEventListener('click', function() {
     const courseId = new URLSearchParams(window.location.search).get('id');
-    
+    const path = '/enroll-form?course_id=' + courseId;
     // Check if user is authenticated
-    if (!auth.redirectToLoginIfNotAuthenticated()) {
+    if (!auth.redirectToLoginIfNotAuthenticated(path)) {
       return;
     }
     
@@ -151,7 +151,7 @@
     })
     .then(data => {
       // User is authenticated, redirect to enrollment form
-      window.location.href = `/enroll-form?course_id=${courseId}`;
+      window.location.href = path;
     })
     .catch(error => {
       console.error('Error:', error);
