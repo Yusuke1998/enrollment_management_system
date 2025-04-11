@@ -63,4 +63,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Father::class);
     }
+
+    public function communications()
+    {
+        return $this->hasMany(CommunicationRecipient::class, 'user_id');
+    }
 }

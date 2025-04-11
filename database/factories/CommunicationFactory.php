@@ -12,8 +12,9 @@ class CommunicationFactory extends Factory
             'title' => $this->faker->sentence,
             'message' => $this->faker->paragraph,
             'sent_date' => $this->faker->date(),
-            'communicable_id' => $this->faker->numberBetween(1, 10),
-            'communicable_type' => $this->faker->randomElement(['App\Models\Father', 'App\Models\Course']),
+            'criteria_course_id' => \App\Models\Course::factory()->create()->id, // Assuming you have a Course factory
+            'criteria_min_age' => $this->faker->numberBetween(18, 65),
+            'criteria_max_age' => $this->faker->numberBetween(18, 65),
         ];
     }
 }

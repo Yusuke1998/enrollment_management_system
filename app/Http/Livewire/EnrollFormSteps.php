@@ -26,9 +26,9 @@ class EnrollFormSteps extends Component
     public $birth_date = '';
     public $email = '';
     public $phone = '';
-    public $message = '';
     
-    // Paso 3: Datos de pago (simplificado para el ejemplo)
+    // Paso 3: Datos de pago
+    public $amount = 0;
     public $paymentMethod = '';
     public $cardNumber = '';
     public $expiryDate = '';
@@ -49,15 +49,26 @@ class EnrollFormSteps extends Component
         'phone' => 'required',
         
         // Paso 3
-        'paymentMethod' => 'required',
-        'cardNumber' => 'required_if:paymentMethod,card|digits:16',
-        'expiryDate' => 'required_if:paymentMethod,card',
-        'cvv' => 'required_if:paymentMethod,card|digits:3',
+        'amount' => 'required|numeric',
+        'paymentMethod' => 'required|in:tarjeta,transferencia,efectivo',
+        'cardNumber' => 'required_if:paymentMethod,tarjeta|digits:16',
+        'expiryDate' => 'required_if:paymentMethod,tarjeta',
+        'cvv' => 'required_if:paymentMethod,tarjeta|digits:3',
     ];
 
     protected $messages = [
         'academy.required' => 'Debes seleccionar una academia',
         'course.required' => 'Debes seleccionar un curso',
+        'amount.required' => 'El monto es requerido',
+        'first_name.required' => 'El nombre es requerido',
+        'first_name.min' => 'El nombre debe tener al menos 3 caracteres',
+        'last_name.required' => 'El apellido es requerido',
+        'last_name.min' => 'El apellido debe tener al menos 3 caracteres',
+        'email.required' => 'El correo electrónico es requerido',
+        'email.email' => 'El correo electrónico no es válido',
+        'birth_date.required' => 'La fecha de nacimiento es requerida',
+        'birth_date.date' => 'La fecha de nacimiento no es válida',
+        'phone.required' => 'El teléfono es requerido',
         'paymentMethod.required' => 'Debes seleccionar un método de pago',
         'cardNumber.required_if' => 'El número de tarjeta es requerido',
         'expiryDate.required_if' => 'La fecha de expiración es requerida',
@@ -77,6 +88,7 @@ class EnrollFormSteps extends Component
                 $this->academy = $course->academy_id;
                 $this->loadCourses();
                 $this->course = $course->id;
+                $this->amount = $course->cost;
                 $this->currentStep = 2; // Saltar al paso 2 si viene con curso seleccionado
             }
         }
@@ -98,6 +110,25 @@ class EnrollFormSteps extends Component
     {
         $this->course = null;
         $this->loadCourses();
+    }
+
+    public function updatedCourse($value)
+    {
+        $course = Course::find($value);
+        if ($course) {
+            $this->amount = $course->cost;
+        } else {
+            $this->amount = 0;
+        }
+    }
+    
+    public function updatedPaymentMethod($value)
+    {
+        if ($value !== 'tarjeta') {
+            $this->cardNumber = '';
+            $this->expiryDate = '';
+            $this->cvv = '';
+        }
     }
 
     public function nextStep()
@@ -147,7 +178,7 @@ class EnrollFormSteps extends Component
             // Aquí podrías agregar la lógica para el pago
             $pay = $enrollment->pays()->create([
                 'method' => $this->paymentMethod,
-                'amount' => 100, // Ejemplo de monto
+                'amount' => $this->amount,
                 'payment_date' => now(),
             ]);
             DB::commit();
@@ -159,7 +190,6 @@ class EnrollFormSteps extends Component
                 ->send(new EnrollmentConfirmation($enrollment));
             } catch (\Exception $e) {
                 Log::error('Error al enviar el correo de confirmación: ' . $e->getMessage());
-                // Manejar el error de envío de correo si es necesario
             }
 
             session()->flash('success', '¡Inscripción exitosa! Nos pondremos en contacto contigo pronto.');
@@ -167,7 +197,6 @@ class EnrollFormSteps extends Component
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al procesar la inscripción: ' . $e->getMessage());
-            $this->addError('enrollment_error', 'Hubo un error al procesar tu inscripción. Por favor, intenta nuevamente.');
             return;
         }
         

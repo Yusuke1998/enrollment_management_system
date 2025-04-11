@@ -133,7 +133,12 @@
     @if($currentStep === 3)
       <div class="space-y-6">
         <h2 class="text-xl font-bold text-gray-800">Información de Pago</h2>
-        
+        <div>
+          <label for="amount" class="block text-sm font-medium text-gray-700">Monto a pagar</label>
+          <input type="text" wire:model="amount" id="amount" disabled
+                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          @error('amount') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+        </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Método de Pago</label>
           <div class="mt-1 space-y-2">
@@ -156,7 +161,7 @@
           </div>
         </div>
 
-        @if($paymentMethod === 'card')
+        @if($paymentMethod === 'tarjeta')
           <div class="space-y-4">
             <div>
               <label for="cardNumber" class="block text-sm font-medium text-gray-700">Número de Tarjeta</label>
@@ -186,17 +191,48 @@
           </div>
         @endif
 
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
           <button type="button" wire:click="prevStep" 
-                  class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500">
-            Anterior
+              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center justify-center min-w-24"
+              wire:loading.attr="disabled">
+            <span wire:loading.remove wire:target="prevStep">Anterior</span>
+            <span wire:loading wire:target="prevStep">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
           </button>
+          
           <button type="button" wire:click="submit" 
-                  class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-            Completar Inscripción
+              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center min-w-32"
+              wire:loading.attr="disabled">
+            <span wire:loading.remove wire:target="submit">Completar Inscripción</span>
+            <span wire:loading wire:target="submit">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Procesando...
+            </span>
           </button>
         </div>
       </div>
     @endif
+
+    <!-- Modal de carga para submit -->
+    <div wire:loading.flex wire:target="submit" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="flex flex-col items-center">
+          <svg class="animate-spin h-12 w-12 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <h3 class="text-lg font-medium text-gray-900">Procesando tu inscripción</h3>
+          <p class="mt-2 text-sm text-gray-500">Estamos registrando tu información y procesando el pago...</p>
+          <p class="mt-1 text-xs text-gray-400">Por favor no cierres esta ventana.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -13,7 +13,9 @@ return new class extends Migration
             $table->string('title');
             $table->text('message');
             $table->date('sent_date');
-            $table->nullableMorphs('communicable'); // Para asociar con padres o cursos.
+            $table->foreignId('criteria_course_id')->nullable()->constrained('courses');
+            $table->integer('criteria_min_age')->nullable();
+            $table->integer('criteria_max_age')->nullable();
             $table->timestamps();
         });
     }

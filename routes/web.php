@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\EnrollFormSteps;
-use App\Http\Controllers\ApiController;
+use App\Http\Controllers\{ApiController, CommunicationController};
 use App\Models\Enrollment;
 
 /*
@@ -58,6 +58,7 @@ Route::post('/logout', function (Request $request) {
     return redirect('/')->withCookie($cookie);
 })->name('logout');
 
+// Admin
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -67,4 +68,10 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::group(['middleware' => 'auth'], function () {
+        Route::resource('communications', \App\Http\Controllers\CommunicationController::class);
+        Route::get('communications/{communication}/resend', [CommunicationController::class, 'resend'])
+            ->name('communications.resend');
+    });
 });
