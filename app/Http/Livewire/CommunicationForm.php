@@ -55,6 +55,7 @@ class CommunicationForm extends Component
         
         // Cargar padres seleccionados
         $this->selectedFathers = $communication->recipients
+            ->where('is_resent', false)
             ->pluck('recipient_id')
             ->toArray();
     }
